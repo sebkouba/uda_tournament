@@ -33,6 +33,7 @@ Displayes **player_id** and number of **matches**
 
 # Using the Project
 The following steps are recommended:
+
 1. Register all players using the registerPlayer(name) method
 2. User countPlayers() to verify the number of registered players
 3. Run swissPairings() to get players grouped into matches for the next round
