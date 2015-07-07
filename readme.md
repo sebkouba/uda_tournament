@@ -1,5 +1,5 @@
 # Tournament Project
-The second project for the Fullstack Web Developer Nanodegree
+The second project for the Fullstack Web Developer Nanodegree: 
 Basic SQL implementation for Swiss Style Tournament
  
 ## Pre-Requisites
