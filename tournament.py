@@ -136,9 +136,3 @@ def swissPairings():
             pairs.append((first_id, first_name, second_id, second_name))
 
     return pairs
-
-
-# create readme
-# create repo in tournament
-# upload to github ?!? -> yes
-# submit
