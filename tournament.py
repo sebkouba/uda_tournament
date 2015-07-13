@@ -7,35 +7,40 @@
 import psycopg2
 
 
-def connect():
+def connect(dbname="tournament"):
     """Connect to the PostgreSQL database.  Returns a database connection."""
-    return psycopg2.connect("dbname=tournament")
+    try:
+        # this allows you to parameterise variables, right?!?
+        db = psycopg2.connect("dbname={}".format(dbname))
+        cursor = db.cursor()
+        return db, cursor
+    except:
+        print("db is messed up somehow")
 
 
 def deleteMatches():
     """Remove all the match records from the database."""
-    db = connect()
-    c = db.cursor()
+    db, c = connect()
 
-    c.execute("DELETE FROM match_result;")
+    c.execute("TRUNCATE match_result;")
     db.commit()
     db.close()
 
 
 def deletePlayers():
     """Remove all the player records from the database."""
-    db = connect()
-    c = db.cursor()
-    c.execute("DELETE FROM player;")
+    db, c = connect()
+    c.execute("TRUNCATE player;")
     db.commit()
     db.close
 
 
 def countPlayers():
     """Returns the number of players currently registered."""
-    db = connect()
-    c = db.cursor()
-    c.execute("SELECT count(*) FROM player")
+    db, c = connect()
+    query = "SELECT count(*) FROM player"
+
+    c.execute(query)
     result = c.fetchall()
     db.close
     return int(result[0][0])
@@ -50,9 +55,11 @@ def registerPlayer(name):
     Args:
       name: the player's full name (need not be unique).
     """
-    db = connect()
-    c = db.cursor()
-    c.execute("INSERT INTO player (uname) VALUES (%s)", (name,))
+    db, c = connect()
+    query = "INSERT INTO player (uname) VALUES (%s)"
+    param = (name,)
+
+    c.execute(query, param)
     db.commit()
     db.close()
 
@@ -70,16 +77,16 @@ def playerStandings():
         wins: the number of matches the player has won
         matches: the number of matches the player has played
     """
-    db = connect()
-    c = db.cursor()
-    c.execute("""
+    db, c = connect()
+    query = """
               SELECT player.id, uname, wins, matches
               FROM player
               LEFT JOIN match_count ON player.id = match_count.player_id
               LEFT JOIN win_count ON player.id = win_count.player_id
               GROUP BY player.id, win_count.wins, match_count.matches
               ORDER BY wins DESC;
-              """)
+              """
+    c.execute(query)
 
     standings = c.fetchall()
 
@@ -94,11 +101,12 @@ def reportMatch(winner, loser):
       winner:  the id number of the player who won
       loser:  the id number of the player who lost
     """
-    db = connect()
-    c = db.cursor()
+    db, c = connect()
 
-    c.execute("INSERT INTO match_result (winner, loser) "
-              "VALUES (%s, %s)", (winner, loser))
+    query = "INSERT INTO match_result (winner, loser) VALUES (%s, %s)"
+    param = (winner, loser)
+
+    c.execute(query, param)
     db.commit()
     db.close()
 

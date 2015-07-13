@@ -7,8 +7,7 @@ from tournament import *
 
 
 def test_show_match_count():
-    db = connect()
-    c = db.cursor()
+    db, c = connect()
     c.execute("SELECT count(*) FROM match_result")
     result = c.fetchall()
     print "### Entries in matche_result table: " + str(result[0][0])
@@ -152,9 +151,7 @@ def test_provision_db():
     players = ['Seb', 'Luki', 'Lotte', 'Rene']
     player_ids = [1, 2, 3, 4]
     matches = [[1, 2], [3, 4], [1, 3], [2, 4]]
-    db = connect()
-    c = db.cursor()
-
+    db, c = connect()
     # remove matches
     c.execute("DELETE FROM match_result;")
 
